@@ -41,11 +41,11 @@
                 {% csrf_token %}
                 <div class="mb-3">
                     <label class="form-label">Bid Amount ($)</label>
-                    {{ form.amount }}
+                    <input type="number" name="amount" class="form-control" placeholder="100" required>
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Proposal Message</label>
-                    {{ form.message }}
+                    <textarea name="message" class="form-control" rows="3" placeholder="Write your proposal here..." required></textarea>
                 </div>
                 <button type="submit" class="btn btn-primary">Submit Bid</button>
             </form>
