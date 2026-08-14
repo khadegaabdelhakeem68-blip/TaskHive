@@ -1,0 +1,81 @@
+{% extends 'tasks/base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card shadow-sm p-4 mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2 class="mb-0">{{ task.title }}</h2>
+            <span class="badge bg-primary fs-6">{{ task.category }}</span>
+        </div>
+        
+        <p class="text-muted fs-5">{{ task.description }}</p>
+        
+        <hr class="my-3">
+        
+        <div class="d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center gap-3">
+                <h4 class="text-success mb-0 fw-bold">Budget: ${{ task.budget }}</h4>
+                <span class="badge {% if task.status == 'Open' %}bg-warning text-dark{% else %}bg-success{% endif %} fs-6 px-3 py-2">
+                    Status: {{ task.status }}
+                </span>
+            </div>
+            <span class="text-muted">Posted by: <strong>{{ task.created_by.username }}</strong></span>
+        </div>
+    </div>
+
+    <h4 class="mb-3">Bids ({{ bids.count }})</h4>
+
+    {% if user == task.created_by %}
+        <div class="alert alert-info">
+            💡 You are the owner of this task. You can review and accept bids below.
+        </div>
+    {% elif task.status == 'Open' %}
+        <div class="card shadow-sm p-4 mb-4">
+            <h5>Place Your Bid</h5>
+            
+            <div class="alert alert-warning py-2 mb-3 small">
+                ⚠️ <strong>Notice:</strong> You are about to bid on this project. Ensure you can deliver before the deadline.
+            </div>
+
+            <form method="POST">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label class="form-label">Bid Amount ($)</label>
+                    {{ form.amount }}
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Proposal Message</label>
+                    {{ form.message }}
+                </div>
+                <button type="submit" class="btn btn-primary">Submit Bid</button>
+            </form>
+        </div>
+    {% else %}
+        <div class="alert alert-secondary">
+            🔒 This task is already assigned and no longer accepting new bids.
+        </div>
+    {% endif %}
+
+    <div class="list-group">
+        {% for bid in bids %}
+            <div class="list-group-item d-flex justify-content-between align-items-center p-3 mb-2 shadow-sm rounded">
+                <div>
+                    <h6 class="mb-1 fw-bold">{{ bid.freelancer.username }}</h6>
+                    <p class="mb-1 text-secondary">{{ bid.message }}</p>
+                    <small class="text-muted">{{ bid.created_at|date:"M d, Y - H:i" }}</small>
+                </div>
+                <div class="text-end">
+                    <span class="badge bg-success fs-6 mb-2 d-block">${{ bid.amount }}</span>
+                    {% if user == task.created_by and task.status == 'Open' %}
+                        <div>
+                            <a href="{% url 'accept_bid' bid.id %}" class="btn btn-sm btn-outline-success">Accept Bid</a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        {% empty %}
+            <p class="text-muted">No bids placed yet.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends 'tasks/base.html' %}
+
+{% block content %}
+<div class="row justify-content-center mt-4">
+    <div class="col-md-8">
+        <div class="card shadow-sm p-4">
+            <h3 class="mb-4 text-center">Post a New Task 🐝</h3>
+            
+            <form method="POST">
+                {% csrf_token %}
+                
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Task Title</label>
+                    {{ form.title }}
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Category</label>
+                    {{ form.category }}
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Budget ($)</label>
+                    {{ form.budget }}
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Description</label>
+                    {{ form.description }}
+                </div>
+
+                <button type="submit" class="btn btn-success w-100 mt-3">Publish Task</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
